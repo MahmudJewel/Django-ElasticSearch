@@ -6,8 +6,8 @@ import requests
 import json
 from .models import DemoElastic
 
-# from .documents import NewsDocument
-# from .serializers import 
+from .documents import NewsDocument
+from .serializers import NewsDocumentSerializer
 
 from django_elasticsearch_dsl_drf.filter_backends import (
     FilteringFilterBackend,
@@ -36,19 +36,40 @@ def generate_random_data(request):
         print("Generated data : ======> ", count)
         print("Title : ======> ", data.get('title'))
         print("Content : ======> ", data.get('content'))
-        count=count+1
+        count = count+1
         DemoElastic.objects.create(
-            title = data.get('title'),
-            content = data.get('content')
+            title=data.get('title'),
+            content=data.get('content')
         )
     text = 'Total generated data => ' + str(count)
     return HttpResponse(text)
     # return HttpResponseRedirect('/')
 
 
+class PublisherDocumentView(DocumentViewSet):
+    document = NewsDocument
+    serializer_class = NewsDocumentSerializer
+    lookup_field = 'first_name'
+    fielddata = True
+    filter_backends = [
+        FilteringFilterBackend,
+        OrderingFilterBackend,
+        CompoundSearchFilterBackend,
+    ]
 
-
-
-
-
-
+    search_fields = (
+        'title',
+        'content',
+    )
+    multi_match_search_fields = (
+        'title',
+        'content',
+    )
+    filter_fields = {
+        'title': 'title',
+        'content': 'content',
+    }
+    ordering_fields = {
+        'id': None,
+    }
+    ordering = ('id',)

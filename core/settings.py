@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'elasticc',
 
     # third party app 
+    'rest_framework',
     'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl_drf',
 ]
 
 # Elastic search 
